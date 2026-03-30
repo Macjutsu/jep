@@ -79,5 +79,5 @@ The Jamf Enrollment Primer script can run by itself but it's designed to be depl
 
 **PreStage installation packages must be signed by an Apple Developer Account.**
 
-Pre-built macOS installation packages can be found on the Jamf Enrollment Primer releases page. One of the two provided macOS installation packages is signed by my personal (Kevin White) Apple Developer Account. However, organizations with their own Apple Developer Account would be better served by using their own signature.
+[Pre-built macOS installation packages can be found on the Jamf Enrollment Primer releases page.](https://github.com/Macjutsu/jep/releases) One of the two provided macOS installation packages is signed by my personal (Kevin White) Apple Developer Account. However, organizations with their own Apple Developer Account would be better served by using their own signature.
 
