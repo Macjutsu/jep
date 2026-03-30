@@ -1,0 +1,40 @@
+#!/bin/bash
+# Jamf Enrollment Primer
+# https://github.com/Macjutsu/jep
+# by Kevin M. White
+# 2026/03/30
+#
+# This script attempts to prevent Jamf Pro enrollment delay errors by priming curl connections to your Jamf Pro server.
+# This script can run by itself but it's designed to be deployed as a script in a macOS PreStage installation package.
+#
+# The next line disables specific ShellCheck codes (https://github.com/koalaman/shellcheck) for the entire script.
+# shellcheck disable=SC2012,SC2024,SC2207
+
+CURL_CONNECT_TIMEOUT_SECONDS=5
+readonly CURL_CONNECT_TIMEOUT_SECONDS
+CURL_RETRY_TIMEOUT_SECONDS=10
+readonly CURL_RETRY_TIMEOUT_SECONDS
+
+log_echo() {
+	echo -e "$(date +"%a %b %d %T") $(hostname -s) $(basename "$0")[$$]: $*"
+}
+
+mdm_service_url=$(profiles status -type enrollment 2> /dev/null | awk -F '/' '/https/ {print $3}')
+[[ -z "${mdm_service_url}" ]] && log_echo "Exit: Unable to determine MDM service URL." && exit 1
+
+log_echo "Status: Attempting initial connection to Jamf Pro service at ${mdm_service_url}..."
+curl_loop_start_epoch=$(date +%s)
+curl_result=$(curl --write-out "%{http_code}" --connect-timeout "${CURL_CONNECT_TIMEOUT_SECONDS}" -o /tmp/jamf.gz "https://${mdm_service_url}/bin/jamf.gz" 2>&1)
+curl_attempts=1
+while [[ $(echo "${curl_result}" | tail -1 | grep -c 200) -eq 0 ]]; do
+	if [[ $(( curl_loop_start_epoch + CURL_RETRY_TIMEOUT_SECONDS )) -lt $(date +%s) ]]; then
+		log_echo "Exit: Initial connection to Jamf Pro timed out after ${curl_attempts} attempts in ${CURL_RETRY_TIMEOUT_SECONDS} seconds."
+		exit 1
+	fi
+	curl_result=$(curl --write-out "%{http_code}" --connect-timeout "${CURL_CONNECT_TIMEOUT_SECONDS}" -o /tmp/jamf.gz "https://${mdm_service_url}/bin/jamf.gz" 2>&1)
+	(( curl_attempts++ ))
+	sleep 1
+done
+log_echo "Success: Initial connection to Jamf Pro took ${curl_attempts} attempt(s) and $(( $(date +%s) - curl_loop_start_epoch )) second(s) to complete."
+
+exit 0
