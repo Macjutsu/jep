@@ -5,5 +5,5 @@
 ### Specific Changes (1.0.0)
 
 - Initial public release.
-- Jamf Enrollment Primer 1.0.0 SHA-256: 6ec3833b3bc9b5f53edf174aaee6b3b1faa45cc7c0b591d62f851dbdfcd6c0e7
+- Jamf Enrollment Primer 1.0.0 SHA-256: 928832ce6d412e01bde8d51d844d95b155858f212501eebe434777abb5d7347f
 

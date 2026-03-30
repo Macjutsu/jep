@@ -2,7 +2,7 @@
 # Jamf Enrollment Primer
 # https://github.com/Macjutsu/jep
 # by Kevin M. White
-# Version 1.0.0
+# v1.0.0
 # 2026/03/30
 #
 # This script attempts to prevent Jamf Pro enrollment delay errors by priming curl connections to your Jamf Pro server.
